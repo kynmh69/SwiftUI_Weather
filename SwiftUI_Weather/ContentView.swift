@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var isNight = false
+    
     var body: some View {
         ZStack(content: {
-            BackgroudView(topColor: .blue, bottomColor: Color("lightBlue"))
+            BackgroudView(isNight: self.$isNight)
             VStack(content: {
                 CityTextView(cityTextName: "Cuptino, CA")
                 MainWeatherStatusView(imageName: "cloud.sun.fill", temprature: 74)
@@ -32,9 +35,14 @@ struct ContentView: View {
                                    temperature: 74)
                 })
                 Spacer()
-                ChangeButton(title: "Change Day Time",
-                             textColor: .blue,
-                             backgroundColor: .white)
+                Button(action: {
+                    self.isNight.toggle()
+                }, label: {
+                    WeatherButton(title: "Change Day Time",
+                                 textColor: .blue,
+                                 backgroundColor: .white)
+                })
+                
                 Spacer()
             })
         })
@@ -72,12 +80,13 @@ struct WeatherDayView: View {
 }
 
 struct BackgroudView: View {
-    var topColor: Color
-    var bottomColor: Color
+    @Binding var isNight: Bool
     
     var body: some View {
-        LinearGradient(gradient: Gradient(colors: [topColor, bottomColor]), startPoint: .topLeading
-                       , endPoint:.bottomTrailing)
+        LinearGradient(gradient: Gradient(colors: [isNight ? .black : .blue,
+                                                   isNight ? .gray : Color("lightBlue")]),
+                       startPoint: .topLeading,
+                       endPoint:.bottomTrailing)
             .edgesIgnoringSafeArea(.all)
     }
 }
@@ -110,21 +119,3 @@ struct MainWeatherStatusView: View {
     }
 }
 
-struct ChangeButton: View {
-    var title: String
-    var textColor: Color
-    var backgroundColor: Color
-    
-    var body: some View {
-        Button(action: {
-            print("Tapped")
-        }, label: {
-            Text(title)
-                .frame(width: 200, height: 50)
-                .background(backgroundColor)
-                .foregroundColor(textColor)
-                .font(.system(size: 20, weight: .bold,design: .default))
-                .cornerRadius(10.0)
-        })
-    }
-}
